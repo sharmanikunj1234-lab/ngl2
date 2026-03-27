@@ -64,14 +64,14 @@ export default function GoldLoanCalculator() {
           <div className="flex justify-center mb-10">
             <div className="bg-yellow-50 p-2 rounded-xl flex gap-2 shadow-inner relative">
               <div
-                className="absolute top-2 bottom-2 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-lg transition-all duration-300 ease-out shadow-lg"
+                className="absolute top-2 bottom-2 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-lg transition-colors duration-200 transition-colors duration-300 ease-out shadow-lg"
                 style={{ left: mode === "amount" ? "8px" : "50%", right: mode === "amount" ? "50%" : "8px" }}
               />
               {["amount","gold"].map(type => (
                 <button
                   key={type}
                   onClick={() => setMode(type)}
-                  className={`relative z-10 px-6 py-2.5 rounded-lg font-bold transition-all duration-300 ${
+                  className={`relative z-10 px-6 py-2.5 rounded-lg font-bold transition-colors duration-200 ${
                     mode === type ? "text-gray-900" : "text-yellow-700 hover:text-yellow-900"
                   }`}
                 >
@@ -94,7 +94,7 @@ export default function GoldLoanCalculator() {
                     type="number"
                     value={loanAmount}
                     onChange={e => setLoanAmount(Number(e.target.value))}
-                    className="w-full pl-10 pr-6 py-4 bg-gray-900/90 text-white text-xl font-bold rounded-xl focus:border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 transition-all"
+                    className="w-full pl-10 pr-6 py-4 bg-gray-900/90 text-white text-xl font-bold rounded-xl focus:border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 transition-colors duration-200"
                   />
                 </div>
               </div>
@@ -108,7 +108,7 @@ export default function GoldLoanCalculator() {
                     type="number"
                     value={goldWeight}
                     onChange={e => setGoldWeight(Number(e.target.value))}
-                    className="w-full px-6 py-4 bg-gray-900/90 text-white text-xl font-bold rounded-xl focus:border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 transition-all"
+                    className="w-full px-6 py-4 bg-gray-900/90 text-white text-xl font-bold rounded-xl focus:border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 transition-colors duration-200"
                   />
                   <span className="absolute right-4 text-sm font-bold text-yellow-500 uppercase">grams</span>
                 </div>

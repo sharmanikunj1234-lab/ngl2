@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import Header from "../components/Header";
+import { useState, useEffect } from "react";
+import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 export default function AdminPage() {
@@ -9,8 +9,8 @@ export default function AdminPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [applications, setApplications] = useState([]);
+  const [search, setSearch] = useState("");
 
-  // Simple hardcoded credentials
   const ADMIN_USERNAME = "admin";
   const ADMIN_PASSWORD = "1234";
 
@@ -19,7 +19,6 @@ export default function AdminPage() {
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
       setLoggedIn(true);
 
-      // Fetch applications
       const res = await fetch("/api/apply");
       const data = await res.json();
       setApplications(data);
@@ -28,35 +27,39 @@ export default function AdminPage() {
     }
   };
 
+  const filtered = applications.filter(
+    (app) =>
+      app.name.toLowerCase().includes(search.toLowerCase()) ||
+      app.mobile.includes(search)
+  );
+
   if (!loggedIn) {
-    // Login form
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-900 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-[#FFF8E8] p-4">
         <form
           onSubmit={handleLogin}
           className="bg-white p-8 rounded-xl shadow max-w-md w-full"
         >
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 text-center">
+          <h2 className="text-2xl font-bold mb-6 text-black text-center">
             Admin Login
           </h2>
+
           <input
-            type="text"
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="w-full text-black mb-4 p-3 border rounded"
+            className="w-full mb-4 p-3 text-black border rounded"
           />
+
           <input
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full text-black mb-6 p-3 border rounded"
+            className="w-full mb-6 p-3 text-black border rounded"
           />
-          <button
-            type="submit"
-            className="w-full bg-yellow-600 text-white py-3 rounded hover:bg-yellow-700"
-          >
+
+          <button className="w-full bg-yellow-500 py-3 rounded font-semibold">
             Login
           </button>
         </form>
@@ -64,57 +67,89 @@ export default function AdminPage() {
     );
   }
 
-  // Admin dashboard
-return (
-  <>
-    <Header />
+  return (
+    <>
+      <Navbar />
 
-    <div className="min-h-screen bg-gray-100 p-6">
-        <button
-  onClick={() => setLoggedIn(false)}
-  className="w-1/4 bg-yellow-600 text-white py-2 rounded hover:bg-yellow-700"
->
-  Logout
-</button>
+      <div className="min-h-screen bg-[#FFF8E8] p-6">
+        {/* TOP BAR */}
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl text-black font-bold">Admin Dashboard</h1>
 
-      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
+          <button
+            onClick={() => setLoggedIn(false)}
+            className="bg-red-500 text-white px-4 py-2 rounded"
+          >
+            Logout
+          </button>
+        </div>
 
-      {applications.length === 0 ? (
-        <p>No applications submitted yet.</p>
-      ) : (
-        <table className="w-full border-collapse border">
-          <thead>
-            <tr className="bg-gray-300">
-              <th className="border p-2">Name</th>
-              <th className="border p-2">Mobile</th>
-              <th className="border p-2">Email</th>
-              <th className="border p-2">City</th>
-              <th className="border p-2">Loan Amount</th>
-              <th className="border p-2">Gold Weight</th>
-              <th className="border p-2">PAN</th>
-              <th className="border p-2">Aadhaar</th>
-            </tr>
-          </thead>
-          <tbody>
-            {applications.map((app, idx) => (
-              <tr key={idx} className="text-center">
-                <td className="border p-2">{app.name}</td>
-                <td className="border p-2">{app.mobile}</td>
-                <td className="border p-2">{app.email}</td>
-                <td className="border p-2">{app.city}</td>
-                <td className="border p-2">{app.loanAmount}</td>
-                <td className="border p-2">{app.goldWeight}</td>
-                <td className="border p-2">{app.pan}</td>
-                <td className="border p-2">{app.aadhaar}</td>
+        {/* SEARCH */}
+        <input
+          placeholder="Search by name or mobile"
+          className="mb-6 p-3 border text-black rounded w-full"
+          onChange={(e) => setSearch(e.target.value)}
+        />
+
+        {/* TABLE */}
+        <div className="overflow-x-auto bg-white rounded-xl shadow">
+          <table className="w-full text-sm">
+            <thead className="bg-yellow-500 text-black">
+              <tr>
+                <th className="p-3">Name</th>
+                <th>Mobile</th>
+                <th>Loan</th>
+                <th>City</th>
+                <th>Gold</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </div>
+            </thead>
 
-    <Footer />
-  </>
-);
+            <tbody>
+              {filtered.map((app, i) => (
+                <tr key={i} className="border-t text-black text-center">
+                  <td className="p-3">{app.name}</td>
+                  <td>{app.mobile}</td>
+                  <td>₹{app.loanAmount}</td>
+                  <td>{app.city}</td>
+                  <td>{app.goldWeight}g</td>
 
+                  {/* ACTIONS */}
+                  <td className="flex gap-2 justify-center p-2">
+
+                    {/* CALL */}
+                    <a
+                      href={`tel:${app.mobile}`}
+                      className="bg-blue-500 text-white px-3 py-1 rounded"
+                    >
+                      Call
+                    </a>
+
+                    {/* WHATSAPP */}
+                    <a
+                      href={`https://wa.me/91${app.mobile}?text=Hi ${app.name}, regarding your gold loan application`}
+                      target="_blank"
+                      className="bg-green-500 text-white px-3 py-1 rounded"
+                    >
+                      WhatsApp
+                    </a>
+
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* EMPTY STATE */}
+        {filtered.length === 0 && (
+          <p className="text-center mt-6 text-gray-500">
+            No applications found
+          </p>
+        )}
+      </div>
+
+      <Footer />
+    </>
+  );
 }

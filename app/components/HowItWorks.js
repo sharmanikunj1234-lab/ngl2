@@ -32,7 +32,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-20 lg:py-10 bg-gray-900">
+    <section id="how-it-works" className="py-20 lg:py-10 bg-[#FFF8E8]">
       <div className="container mx-auto px-4 lg:px-8">
         {/* Section Header */}
         <motion.div
@@ -45,10 +45,10 @@ export function HowItWorks() {
           <span className="text-yellow-400 font-semibold text-sm uppercase tracking-wider">
             Simple Process
           </span>
-          <h2 className="text-4xl md:text-4xl font-bold text-white mt-3 mb-4">
+          <h2 className="text-4xl md:text-4xl font-bold text-gray-900 mt-3 mb-4">
             How It Works
           </h2>
-          <p className="text-gray-300 text-lg">
+          <p className="text-gray-500 text-lg">
             Get your loan in 4 simple steps. Quick, transparent, and hassle-free.
           </p>
         </motion.div>
@@ -62,7 +62,7 @@ export function HowItWorks() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-gray-800 rounded-xl p-8 shadow-lg text-center hover:scale-105 transition-transform duration-300"
+              className="bg-white rounded-xl p-8 shadow-lg text-center hover:scale-105 transition-transform duration-300"
             >
               {/* Icon Circle */}
               <div className="w-24 h-24 mx-auto rounded-full bg-yellow-400/20 border-4 border-yellow-400 flex items-center justify-center mb-6">
@@ -75,10 +75,10 @@ export function HowItWorks() {
               </div>
 
               {/* Step Title */}
-              <h3 className="text-white text-xl font-bold mb-3">{step.title}</h3>
+              <h3 className="text-black text-xl font-bold mb-3">{step.title}</h3>
 
               {/* Step Description */}
-              <p className="text-gray-300 text-sm">{step.description}</p>
+              <p className="text-gray-600 text-sm">{step.description}</p>
             </motion.div>
           ))}
         </div>
