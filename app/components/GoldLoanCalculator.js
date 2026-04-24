@@ -1,168 +1,144 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { motion } from "framer-motion";
 
 export default function GoldLoanCalculator() {
-  const GOLD_RATE = 5000; // fixed gold rate per gram
+  const [goldWeight, setGoldWeight] = useState(20); // grams
+  const [goldRate, setGoldRate] = useState(6000); // per gram
+  const [ltv, setLtv] = useState(75); // %
 
-  const [mode, setMode] = useState("amount");
-  const [loanAmount, setLoanAmount] = useState(100000);
-  const [goldWeight, setGoldWeight] = useState(20);
-  const [particles, setParticles] = useState([]);
-
-  // Floating particles
-  useEffect(() => {
-    const newParticles = Array.from({ length: 15 }, (_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      delay: Math.random() * 5,
-      duration: 3 + Math.random() * 4,
-      size: 2 + Math.random() * 3,
-    }));
-    setParticles(newParticles);
-  }, []);
-
-  const goldRequired = (loanAmount / GOLD_RATE).toFixed(2);
-  const loanEligible = (goldWeight * GOLD_RATE).toLocaleString();
+  // calculation
+  const goldValue = goldWeight * goldRate;
+  const loanAmount = (goldValue * ltv) / 100;
 
   return (
-    <div className="relative max-w-xl mx-auto p-4">
+    <section id="gold-calculator" className="py-20 bg-[#FFF8EA]">
+      <div className="max-w-5xl mx-auto px-6">
 
-      {/* Particles */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {particles.map(p => (
-          <div
-            key={p.id}
-            className="absolute rounded-full bg-yellow-400 animate-float"
-            style={{
-              left: `${p.x}%`,
-              bottom: '-10px',
-              width: `${p.size}px`,
-              height: `${p.size}px`,
-              '--duration': `${p.duration}s`,
-              '--delay': `${p.delay}s`,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Glowing Motion Border */}
-      <div className="relative rounded-3xl p-1">
-        <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-400 blur-lg animate-borderGlow opacity-90"></div>
-
-        {/* Card */}
-        <div className="relative bg-gray-800 rounded-3xl border-2 border-yellow-400 p-8 md:p-12">
-          
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h2 className="text-3xl md:text-4xl font-extrabold bg-shimmer-text bg-clip-text text-black">
-              Gold Loan Calculator
-            </h2>
-          </div>
-
-          {/* Mode Toggle */}
-          <div className="flex justify-center mb-10">
-            <div className="bg-yellow-50 p-2 rounded-xl flex gap-2 shadow-inner relative">
-              <div
-                className="absolute top-2 bottom-2 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-lg transition-colors duration-200 transition-colors duration-300 ease-out shadow-lg"
-                style={{ left: mode === "amount" ? "8px" : "50%", right: mode === "amount" ? "50%" : "8px" }}
-              />
-              {["amount","gold"].map(type => (
-                <button
-                  key={type}
-                  onClick={() => setMode(type)}
-                  className={`relative z-10 px-6 py-2.5 rounded-lg font-bold transition-colors duration-200 ${
-                    mode === type ? "text-gray-900" : "text-yellow-700 hover:text-yellow-900"
-                  }`}
-                >
-                  {type === "amount" ? "By Loan Amount" : "By Gold Weight"}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Input */}
-          <div className="space-y-8">
-            {mode === "amount" ? (
-              <div className="relative">
-                <label className="block font-bold text-yellow-400 mb-3 text-sm uppercase tracking-wider">
-                  Enter Loan Amount
-                </label>
-                <div className="relative flex items-center">
-                  <span className="absolute left-4 text-2xl font-bold text-yellow-500 z-10">₹</span>
-                  <input
-                    type="number"
-                    value={loanAmount}
-                    onChange={e => setLoanAmount(Number(e.target.value))}
-                    className="w-full pl-10 pr-6 py-4 bg-gray-900/90 text-white text-xl font-bold rounded-xl focus:border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 transition-colors duration-200"
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className="relative">
-                <label className="block font-bold text-yellow-400 mb-3 text-sm uppercase tracking-wider">
-                  Enter Gold Weight
-                </label>
-                <div className="relative flex items-center">
-                  <input
-                    type="number"
-                    value={goldWeight}
-                    onChange={e => setGoldWeight(Number(e.target.value))}
-                    className="w-full px-6 py-4 bg-gray-900/90 text-white text-xl font-bold rounded-xl focus:border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 transition-colors duration-200"
-                  />
-                  <span className="absolute right-4 text-sm font-bold text-yellow-500 uppercase">grams</span>
-                </div>
-              </div>
-            )}
-
-            {/* Result */}
-            <div className="relative group mt-8">
-              <div className="bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-400 rounded-2xl p-8 text-center shadow-xl">
-                <p className="text-gray-900 font-bold text-sm uppercase tracking-wider mb-2 opacity-90">
-                  {mode === "amount" ? "Gold Required" : "Eligible Loan Amount"}
-                </p>
-                <h3 className="text-5xl md:text-6xl font-black text-gray-900">
-                  {mode === "amount" ? (
-                    <>
-                      {goldRequired}<span className="text-3xl ml-2">grams</span>
-                    </>
-                  ) : (
-                    <>₹ {loanEligible}</>
-                  )}
-                </h3>
-              </div>
-            </div>
-
-            {/* Gold Rate Info */}
-            <div className="text-center pt-4">
-              <p className="text-yellow-200/70 text-sm">
-                Gold Rate: <span className="text-yellow-400 font-bold">₹{GOLD_RATE.toLocaleString()}/gram</span>
-              </p>
-            </div>
-          </div>
+        {/* HEADER */}
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold text-gray-900">
+            Gold Loan <span className="text-yellow-500">Calculator</span>
+          </h2>
+          <p className="text-gray-600 mt-3">
+            Calculate how much loan you can get instantly against your gold
+          </p>
+          {/* LINE */}
+      <div className="w-20 h-1 bg-yellow-500 mx-auto mt-4 rounded-full"></div>
         </div>
+         
+    
+
+        {/* MAIN CARD */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-3xl p-8 shadow-xl border border-yellow-200/40"
+        >
+          <div className="grid md:grid-cols-2 gap-10">
+
+            {/* LEFT - INPUTS */}
+            <div className="space-y-8">
+
+              {/* GOLD WEIGHT */}
+              <div>
+                <label className="font-semibold text-gray-800">
+                  Gold Weight (grams)
+                </label>
+                <input
+                  type="range"
+                  min="1"
+                  max="1000"
+                  value={goldWeight}
+                  onChange={(e) => setGoldWeight(e.target.value)}
+                  className="w-full mt-3 accent-yellow-500"
+                />
+                <p className="mt-1 text-yellow-600 font-semibold">
+                  {goldWeight} grams
+                </p>
+              </div>
+
+              {/* GOLD RATE */}
+              <div>
+                <label className="font-semibold text-gray-800">
+                  Gold Rate (₹/gram)
+                </label>
+                <input
+                  type="range"
+                  min="8000"
+                  max="20000"
+                  step="100"
+                  value={goldRate}
+                  onChange={(e) => setGoldRate(e.target.value)}
+                  className="w-full mt-3 accent-yellow-500"
+                />
+                <p className="mt-1 text-yellow-600 font-semibold">
+                  ₹{goldRate}
+                </p>
+              </div>
+
+              {/* LTV */}
+              <div>
+                <label className="font-semibold text-gray-800">
+                  Loan to Value (%)
+                </label>
+                <input
+                  type="range"
+                  min="50"
+                  max="75"
+                  value={ltv}
+                  onChange={(e) => setLtv(e.target.value)}
+                  className="w-full mt-3 accent-yellow-500"
+                />
+                <p className="mt-1 text-yellow-600 font-semibold">
+                  {ltv}%
+                </p>
+              </div>
+
+            </div>
+
+            {/* RIGHT - OUTPUT */}
+            <motion.div
+              animate={{ scale: [1, 1.02, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-3xl p-8 text-black shadow-lg"
+            >
+              <h3 className="text-xl font-semibold mb-6">
+                Your Loan Estimate
+              </h3>
+
+              <div className="space-y-4">
+
+                <div className="flex justify-between">
+                  <span>Gold Value</span>
+                  <span className="font-semibold">
+                    ₹{goldValue.toLocaleString("en-IN")}
+                  </span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span>Eligible Loan</span>
+                  <span className="font-bold text-2xl">
+                    ₹{loanAmount.toLocaleString("en-IN")}
+                  </span>
+                </div>
+
+                <div className="text-sm opacity-80 mt-4">
+                  *Final loan amount may vary based on purity & verification
+                </div>
+
+              </div>
+
+              {/* CTA */}
+              <button className="mt-8 w-full bg-black text-white py-3 rounded-xl font-semibold hover:opacity-90 transition">
+                Apply Now
+              </button>
+            </motion.div>
+
+          </div>
+        </motion.div>
       </div>
-
-      {/* Animations */}
-      <style jsx>{`
-        @keyframes float {
-          0%,100% { transform: translateY(0); opacity:0; }
-          10%,90% { opacity:1; }
-          100% { transform: translateY(-120vh) translateX(15px); opacity:0; }
-        }
-
-        @keyframes shimmerText { to { background-position: 200% center; } }
-
-        @keyframes borderGlow {
-          0% { filter: drop-shadow(0 0 5px #facc15) drop-shadow(0 0 10px #f59e0b); }
-          50% { filter: drop-shadow(0 0 15px #facc15) drop-shadow(0 0 25px #f59e0b); }
-          100% { filter: drop-shadow(0 0 5px #facc15) drop-shadow(0 0 10px #f59e0b); }
-        }
-
-        .animate-float { animation: float var(--duration) ease-in-out var(--delay) infinite; }
-        .bg-shimmer-text { background: linear-gradient(90deg, #b45309,#facc15,#fde68a,#facc15,#b45309); background-size:200% auto; animation: shimmerText 3s linear infinite; }
-        .animate-borderGlow { animation: borderGlow 2s infinite; }
-      `}</style>
-    </div>
+    </section>
   );
 }

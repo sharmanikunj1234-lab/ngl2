@@ -1,203 +1,285 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { motion } from "framer-motion";
 
 export default function ApplyNow() {
   const [step, setStep] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [mobile, setMobile] = useState("");
+  const [name, setName] = useState("");
+  const [consent, setConsent] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [timer, setTimer] = useState(8);
 
-  const initialForm = {
-    name: "",
-    mobile: "",
-    email: "",
-    city: "",
-    loanAmount: "",
-    goldWeight: "",
-    pan: "",
-    aadhaar: "",
-  };
-
-  const [formData, setFormData] = useState(initialForm);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [step]);
+  // OTP STATE
+  const [otpArray, setOtpArray] = useState(["", "", "", "", "", ""]);
+  const inputsRef = useRef([]);
 
   const inputStyle =
-    "w-full bg-yellow-50 border border-yellow-300 text-gray-900 rounded-lg px-4 py-3 mb-4 focus:outline-none focus:ring-2 focus:ring-yellow-500";
+    "w-full bg-white border border-gray-300 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500";
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    if (
-      ["mobile", "aadhaar", "loanAmount", "goldWeight"].includes(name) &&
-      !/^\d*$/.test(value)
-    )
-      return;
-
-    setFormData({
-      ...formData,
-      [name]: name === "pan" ? value.toUpperCase() : value,
-    });
-  };
-
-  const resetForm = () => {
-    setFormData(initialForm);
-    setStep(1);
-    setSuccess(false);
-  };
-
-  const submitApplication = async () => {
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/apply", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (!res.ok) throw new Error("Failed");
-
-      setSuccess(true);
-
-      setTimeout(() => {
-        resetForm();
-      }, 3000);
-    } catch {
-      alert("Submission failed. Please try again.");
-    } finally {
-      setLoading(false);
+  // ⏱ TIMER
+  useEffect(() => {
+    if (step === 2 && timer > 0) {
+      const interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(interval);
     }
+  }, [step, timer]);
+
+  // ✅ VALIDATION
+  const validateStep1 = () => {
+    let newErrors = {};
+
+    if (!name || name.trim().length < 3) {
+      newErrors.name = "Enter valid full name";
+    }
+
+    if (!/^[6-9]\d{9}$/.test(mobile)) {
+      newErrors.mobile = "Enter valid 10-digit mobile number";
+    }
+
+    if (!consent) {
+      newErrors.consent = "Please accept terms to continue";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // OTP HANDLER
+  const handleOtpChange = (value, index) => {
+    if (!/^\d?$/.test(value)) return;
+
+    const newOtp = [...otpArray];
+    newOtp[index] = value;
+    setOtpArray(newOtp);
+
+    if (value && index < 5) {
+      inputsRef.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (e, index) => {
+    if (e.key === "Backspace" && !otpArray[index] && index > 0) {
+      inputsRef.current[index - 1]?.focus();
+    }
+  };
+
+  // HANDLE PASTE (🔥 premium UX)
+  const handlePaste = (e) => {
+    const paste = e.clipboardData.getData("text").slice(0, 6);
+    if (!/^\d{6}$/.test(paste)) return;
+
+    const newOtp = paste.split("");
+    setOtpArray(newOtp);
+
+    inputsRef.current[5]?.focus();
   };
 
   return (
     <>
       <Navbar />
 
-      <div className="min-h-screen bg-[#FFF8E8] py-10 px-4">
-        <div className="max-w-xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
-
-          {/* TITLE */}
-          <h1 className="text-3xl font-bold text-center mb-4 text-gray-900">
-            Apply for Gold Loan
+      <div className="min-h-screen bg-[#FFF8E8] flex items-center justify-center px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-md w-full bg-white p-8 rounded-3xl shadow-xl border border-gray-200"
+        >
+          {/* HEADING */}
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Let’s get you started
           </h1>
 
-          {/* TRUST BADGES */}
-          <div className="flex justify-center gap-4 text-xs text-gray-600 mb-6">
-            <span>✔ RBI Partner</span>
-            <span>✔ Safe & Secure</span>
-            <span>✔ 10L+ Customers</span>
-          </div>
-
-          {/* PROGRESS BAR */}
-          <div className="h-2 bg-gray-200 rounded mb-6">
-            <div
-              className="h-2 bg-yellow-500 rounded transition-all duration-300"
-              style={{ width: `${(step / 4) * 100}%` }}
-            />
-          </div>
+          <p className="text-sm text-gray-500 mb-6">
+            Enter your details to continue your gold loan application
+          </p>
 
           {/* STEP 1 */}
           {step === 1 && (
             <>
-              <input name="name" placeholder="Full Name" className={inputStyle} value={formData.name} onChange={handleChange} />
-              <input name="mobile" placeholder="Mobile Number" className={inputStyle} value={formData.mobile} onChange={handleChange} />
-              <input name="email" placeholder="Email Address" className={inputStyle} value={formData.email} onChange={handleChange} />
-              <input name="city" placeholder="City / Pincode" className={inputStyle} value={formData.city} onChange={handleChange} />
+              {/* NAME */}
+              <input
+                type="text"
+                placeholder="Full Name"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setErrors({ ...errors, name: "" });
+                }}
+                className={`${inputStyle} mb-1`}
+              />
+              {errors.name && (
+                <p className="text-red-500 text-xs mb-3">{errors.name}</p>
+              )}
 
-              <button onClick={() => setStep(2)} className="w-full bg-yellow-500 text-black py-3 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
-                Next
-              </button>
+              {/* MOBILE */}
+              <div className="flex items-center border border-gray-300 rounded-xl mb-1 overflow-hidden">
+                <span className="px-4 bg-gray-100 text-gray-700 font-medium">
+                  +91
+                </span>
+                <input
+                  type="tel"
+                  placeholder="Enter Mobile Number"
+                  value={mobile}
+                  onChange={(e) => {
+                    if (/^\d*$/.test(e.target.value)) {
+                      setMobile(e.target.value);
+                      setErrors({ ...errors, mobile: "" });
+                    }
+                  }}
+                  className="w-full px-4 py-3 outline-none"
+                />
+              </div>
+              {errors.mobile && (
+                <p className="text-red-500 text-xs mb-3">{errors.mobile}</p>
+              )}
+
+              {/* CONSENT */}
+              <div className="flex items-start gap-2 mb-2">
+                <input
+                  type="checkbox"
+                  checked={consent}
+                  onChange={() => {
+                    setConsent(!consent);
+                    setErrors({ ...errors, consent: "" });
+                  }}
+                  className="mt-1"
+                />
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  I grant permission to Capri Loans and its representatives to
+                  reach out via call, SMS, email, or WhatsApp regarding my
+                  application. This overrides DNC/NDNC registration.
+                </p>
+              </div>
+              {errors.consent && (
+                <p className="text-red-500 text-xs mb-4">{errors.consent}</p>
+              )}
+
+              {/* BUTTON */}
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
+                onClick={() => {
+                  if (validateStep1()) {
+                    setStep(2);
+                    setTimer(8);
+                  }
+                }}
+                className="w-full bg-yellow-500 py-3 rounded-xl font-semibold hover:bg-yellow-400"
+              >
+                Send OTP
+              </motion.button>
             </>
           )}
 
-          {/* STEP 2 */}
+          {/* STEP 2: OTP */}
           {step === 2 && (
             <>
-              <input name="loanAmount" placeholder="Loan Amount (₹)" className={inputStyle} value={formData.loanAmount} onChange={handleChange} />
-              <input name="goldWeight" placeholder="Gold Weight (grams)" className={inputStyle} value={formData.goldWeight} onChange={handleChange} />
+              <h2 className="text-xl text-gray-600 font-semibold mb-2">
+                Verify your number
+              </h2>
 
-              <div className="flex gap-4">
-                <button onClick={() => setStep(1)} className="w-1/2 border py-3 rounded-lg">
-                  Back
+              <p className="text-sm text-gray-600 mb-6">
+                Enter the 6-digit OTP sent to +91 {mobile}
+                <button
+                  onClick={() => setStep(1)}
+                  className="text-blue-600 underline ml-2"
+                >
+                  Edit
                 </button>
-                <button onClick={() => setStep(3)} className="w-1/2 bg-yellow-500 py-3 rounded-lg font-semibold hover:bg-yellow-400">
-                  Next
-                </button>
+              </p>
+
+              {/* OTP BOXES */}
+              <div
+                className="flex justify-between gap-3 mb-6"
+                onPaste={handlePaste}
+              >
+                {otpArray.map((digit, index) => (
+                  <input
+                    key={index}
+                    ref={(el) => (inputsRef.current[index] = el)}
+                    type="text"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) =>
+                      handleOtpChange(e.target.value, index)
+                    }
+                    onKeyDown={(e) => handleKeyDown(e, index)}
+                    className="w-12 h-14 text-center text-xl border border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-500 outline-none"
+                  />
+                ))}
               </div>
+
+              {/* VERIFY BUTTON */}
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
+                onClick={() => {
+                  const finalOtp = otpArray.join("");
+                  if (finalOtp.length === 6) {
+                    setStep(3);
+                  } else {
+                    alert("Enter complete OTP");
+                  }
+                }}
+                className="w-full bg-yellow-500 py-3 rounded-xl font-semibold hover:bg-yellow-400"
+              >
+                Verify OTP
+              </motion.button>
+
+              {/* TIMER / RESEND */}
+              <p className="text-xs text-gray-500 mt-4 text-center">
+                {timer > 0 ? (
+                  <>
+                    You will receive an OTP within{" "}
+                    <span className="font-semibold">
+                      00:{timer < 10 ? `0${timer}` : timer}
+                    </span>{" "}
+                    secs
+                  </>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setTimer(8);
+                      setOtpArray(["", "", "", "", "", ""]);
+                    }}
+                    className="text-blue-600 font-medium"
+                  >
+                    Resend OTP
+                  </button>
+                )}
+              </p>
             </>
           )}
 
           {/* STEP 3 */}
           {step === 3 && (
             <>
-              <input name="pan" placeholder="PAN Number" className={inputStyle} value={formData.pan} onChange={handleChange} />
-              <input name="aadhaar" placeholder="Aadhaar Number" className={inputStyle} value={formData.aadhaar} onChange={handleChange} />
+              <h2 className="text-xl font-bold text-green-600 mb-3">
+                ✅ Application Received
+              </h2>
 
-              <div className="flex gap-4">
-                <button onClick={() => setStep(2)} className="w-1/2 border py-3 rounded-lg">
-                  Back
-                </button>
-                <button onClick={() => setStep(4)} className="w-1/2 bg-yellow-500 py-3 rounded-lg font-semibold hover:bg-yellow-400">
-                  Review
-                </button>
-              </div>
-            </>
-          )}
+              <p className="text-gray-600 text-sm mb-6">
+                Our loan expert will contact you shortly.
+              </p>
 
-          {/* STEP 4 */}
-          {step === 4 && (
-            <>
-              <div className="bg-gray-800 p-5 rounded-lg text-sm mb-6">
-                <p><b>Name:</b> {formData.name}</p>
-                <p><b>Mobile:</b> {formData.mobile}</p>
-                <p><b>Email:</b> {formData.email}</p>
-                <p><b>City:</b> {formData.city}</p>
-                <p><b>Loan:</b> ₹{formData.loanAmount}</p>
-                <p><b>Gold:</b> {formData.goldWeight}g</p>
-              </div>
-
-              {success && (
-                <div className="bg-green-600 text-white text-center p-4 rounded-lg mb-4">
-                  ✅ Application Submitted Successfully
-                </div>
-              )}
-
-              {!success && (
-                <button
-                  onClick={submitApplication}
-                  disabled={loading}
-                  className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold"
-                >
-                  {loading ? "Submitting..." : "Submit Application"}
-                </button>
-              )}
-
-              {/* WHATSAPP FALLBACK */}
-              <a
-                href={`https://wa.me/9217900369?text=Name:${formData.name},Loan:${formData.loanAmount}`}
+              <motion.a
+                href="https://wa.me/919211515369"
                 target="_blank"
-                className="block text-center mt-4 text-green-600"
+                whileHover={{ scale: 1.05 }}
+                className="block text-center bg-green-500 text-white py-3 rounded-xl font-semibold"
               >
-                Prefer WhatsApp? Click here
-              </a>
+                💬 Continue on WhatsApp
+              </motion.a>
             </>
           )}
-        </div>
+        </motion.div>
       </div>
-
-      {/* FLOATING WHATSAPP */}
-      <a
-        href="https://wa.me/9217900369"
-        target="_blank"
-        className="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg"
-      >
-        💬
-      </a>
 
       <Footer />
     </>

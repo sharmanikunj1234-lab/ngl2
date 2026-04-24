@@ -12,6 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
+  metadataBase: new URL("https://your-project-name.vercel.app"),
   title: "National Gold Loan | Instant & Secure Gold Loans",
   description:
     "Apply for instant gold loans with low interest rates, safe gold storage, and quick disbursal. RBI-compliant gold loan services across India.",
