@@ -562,7 +562,7 @@ border border-yellow-200/60 shadow-sm hover:shadow-xl transition duration-300"
     y: [0, -8, 0],
     boxShadow: [
       "0px 0px 0px rgba(255, 215, 0, 0.3)",
-      "0px 0px 25px rgba(255, 215, 0, 0.8)",
+      "0px 0px 20px rgba(255, 215, 0, 0.6)",
       "0px 0px 0px rgba(255, 215, 0, 0.3)",
     ],
   }}
@@ -572,16 +572,16 @@ border border-yellow-200/60 shadow-sm hover:shadow-xl transition duration-300"
     boxShadow: { duration: 1.5, repeat: Infinity },
   }}
 
-  className="fixed bottom-6 right-6 flex items-center gap-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black px-5 py-3 rounded-full font-semibold shadow-xl z-50 border border-yellow-300"
+  className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black px-3 sm:px-5 py-2 sm:py-3 rounded-full font-medium sm:font-semibold shadow-xl z-50 border border-yellow-300 text-xs sm:text-base"
 >
   {/* ICON */}
-  <span className="bg-white text-green-600 rounded-full w-9 h-9 flex items-center justify-center text-lg shadow-md">
+  <span className="bg-white text-green-600 rounded-full w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center text-sm sm:text-lg shadow-md">
     💬
   </span>
 
   {/* TEXT */}
-  <span className="text-sm md:text-base">
-    Get Loan in 30 mins
+  <span className="hidden sm:inline">
+    Request Call
   </span>
 
   {/* PULSE DOT */}
