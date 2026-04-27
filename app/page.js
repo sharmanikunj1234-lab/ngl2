@@ -25,7 +25,7 @@ export default function Home() {
 };
 
   return (
-    <main className="min-h-screen bg-[#FFF8E8] text-gray-800">
+    <main className="min-h-screen bg-[#FFF8E8] text-gray-800 overflow-x-hidden">
       <Navbar />
       
       {/* HERO */}

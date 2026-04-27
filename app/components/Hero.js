@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useState } from "react";
-import ApplyModal from "./ApplyModal"; // import this
+import ApplyModal from "./ApplyModal"; 
 
 export default function Hero() {
   const [openModal, setOpenModal] = useState(false);
@@ -25,13 +25,13 @@ export default function Hero() {
             {/* LEFT */}
             <div>
               <h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
-                Turn Your <span className="text-yellow-500">Gold</span> Into Cash  
-                <br /> in Just 30 Minutes
+                Simple, Secure <span className="text-yellow-500">Gold</span> Loans, 
+                <br /> Just the Way It Should Be
               </h1>
 
               <p className="text-yellow-500 mt-6 text-xl">
-                Get up to ₹10 Lakhs instantly • No credit check • 100% secure gold storage
-              </p>
+                Low interest rates • Quick disbursal • 100% secure vaults
+                </p>
 
               {/* TRUST BADGES */}
               <div className="flex flex-wrap gap-4 mt-8 text-sm font-semibold text-gray-700">
@@ -95,7 +95,7 @@ export default function Hero() {
               <motion.img
                 src="/jwellery1.png"
                 alt="Gold Loan"
-                className="w-[420px]"
+                className="w-full max-w-[420px] h-auto"
                 animate={{ y: [0, -12, 0] }}
                 transition={{ duration: 3, repeat: Infinity }}
               />
