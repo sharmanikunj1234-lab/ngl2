@@ -181,19 +181,7 @@ border border-yellow-200/60 shadow-sm hover:shadow-xl transition duration-300"
             <span>✔ Quick disbursal</span>
           </div>
 
-          {/* CTA */}
-          <>
-         <button
-  onClick={() => setOpenModal(true)}
-  className="bg-yellow-500 text-black px-8 py-3 rounded-lg font-semibold hover:bg-yellow-400 transition-all"
->
-  Apply for Gold Loan
-</button>
-<ApplyModal
-  open={openModal}
-  onClose={() => setOpenModal(false)}
-/>
-</>
+        
         </div>
       </div>
 
@@ -581,7 +569,7 @@ border border-yellow-200/60 shadow-sm hover:shadow-xl transition duration-300"
 
   {/* TEXT */}
   <span className="hidden sm:inline">
-    Request Call
+    Need Help?
   </span>
 
   {/* PULSE DOT */}

@@ -9,7 +9,8 @@ export default function Hero() {
 
   return (
     <>
-      <section className="pt-2 md:pt-10 pb-16 bg-[#FFF8E8]">
+      {/* ADD PROPER TOP SPACING */}
+      <section className="pt-6 md:pt-10 pb-16 bg-[#FFF8E8]">
         <div className="max-w-7xl mx-auto px-5 md:px-6">
 
           {/* HERO BOX */}
@@ -17,42 +18,36 @@ export default function Hero() {
 
             <div className="grid md:grid-cols-2 gap-8 md:gap-10 items-center">
 
-              {/* LEFT CONTENT */}
+              {/* LEFT */}
               <div>
 
-                {/* HEADING */}
                 <h1 className="text-3xl md:text-6xl leading-tight font-bold text-gray-900">
                   Simple, Secure{" "}
                   <span className="text-yellow-500">Gold</span> Loans,
                   <br className="hidden md:block" /> Just the Way It Should Be
                 </h1>
 
-                {/* SUBTEXT */}
                 <p className="text-yellow-600 mt-4 md:mt-6 text-base md:text-xl">
                   Low interest rates • Quick disbursal • 100% secure vaults
                 </p>
 
-                {/* TRUST BADGES */}
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-6 text-sm font-semibold text-gray-700">
                   <span>✔ RBI Registered Partner</span>
                   <span>✔ 100% Insured Gold</span>
                   <span>✔ 4.8⭐ Customer Rating</span>
                 </div>
 
-                {/* CTA BUTTONS */}
                 <div className="flex flex-col sm:flex-row gap-3 mt-8">
 
-                  {/* APPLY BUTTON */}
                   <motion.button
                     onClick={() => setOpenModal(true)}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="w-full sm:w-auto bg-yellow-500 text-black px-6 py-3 md:px-8 md:py-4 rounded-lg font-semibold shadow-md"
+                    className="w-full sm:w-auto bg-yellow-500 text-black px-6 py-3 md:px-8 md:py-4 rounded-lg font-semibold shadow-md cursor-pointer"
                   >
                     Apply Now
                   </motion.button>
 
-                  {/* WHATSAPP */}
                   <motion.a
                     href="https://wa.me/919211515369?text=Hi%20I%20want%20a%20gold%20loan"
                     target="_blank"
@@ -65,11 +60,6 @@ export default function Hero() {
                   </motion.a>
 
                 </div>
-
-                {/* URGENCY */}
-                <p className="text-red-500 mt-6 text-sm md:text-base font-medium">
-                  🔥 Limited Time: 0 Processing Fee Today
-                </p>
 
               </div>
 
@@ -89,7 +79,6 @@ export default function Hero() {
         </div>
       </section>
 
-      {/* MODAL */}
       <ApplyModal
         open={openModal}
         onClose={() => setOpenModal(false)}

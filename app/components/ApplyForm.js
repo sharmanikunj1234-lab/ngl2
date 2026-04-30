@@ -8,7 +8,6 @@ export default function FastLeadForm() {
   const [consent, setConsent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-
   const [errors, setErrors] = useState({});
 
   const validate = () => {
@@ -36,28 +35,32 @@ export default function FastLeadForm() {
     setLoading(true);
 
     try {
-      // 🔥 TELEGRAM / API CALL
-      await fetch("/api/send-lead", {
+      // ✅ SEND TO GOOGLE SHEET
+      await fetch("https://script.google.com/macros/s/AKfycbxcvCKq6tUy_Edcurqpvy6q_EoaQFFuV6FObNHB_ypsV5WNg_D9Vx42cxqZMuyJA4m4ww/exec", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        mode: "no-cors", // important
         body: JSON.stringify({
           name,
-          mobile,
+          phone: mobile,
         }),
       });
 
+      // ✅ SUCCESS UI
       setSuccess(true);
 
-      // 🔥 Optional: auto WhatsApp open (HIGH CONVERSION)
+      // ✅ OPEN WHATSAPP
       window.open(
-  `https://wa.me/919211515369?text=Hi, my name is ${name} and I want a gold loan. My number is ${mobile}`,
-  "_blank"
-);
+        `https://wa.me/919211515369?text=Hi, my name is ${name} and I want a gold loan. My number is ${mobile}`,
+        "_blank"
+      );
 
-    } catch {
-      alert("Something went wrong");
+      // ✅ RESET FORM
+      setName("");
+      setMobile("");
+      setConsent(false);
+
+    } catch (err) {
+      alert("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -73,7 +76,7 @@ export default function FastLeadForm() {
             ✅ Request Received
           </h2>
           <p className="text-gray-500">
-            Our team will call you within 5 minutes
+            Our team will call you shortly
           </p>
         </div>
       ) : (

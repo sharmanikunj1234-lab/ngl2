@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import ApplyModal from "./ApplyModal";
 
 export default function GoldLoanCalculator() {
+  const [openModal, setOpenModal] = useState(false);
   const [goldWeight, setGoldWeight] = useState(20); // grams
   const [goldRate, setGoldRate] = useState(6000); // per gram
   const [ltv, setLtv] = useState(75); // %
@@ -13,6 +15,7 @@ export default function GoldLoanCalculator() {
   const loanAmount = (goldValue * ltv) / 100;
 
   return (
+    <>
     <section id="gold-calculator" className="py-20 bg-[#FFF8EA]">
       <div className="max-w-5xl mx-auto px-6">
 
@@ -131,7 +134,9 @@ export default function GoldLoanCalculator() {
               </div>
 
               {/* CTA */}
-              <button className="mt-8 w-full bg-black text-white py-3 rounded-xl font-semibold hover:opacity-90 transition">
+              <button 
+              onClick={() => setOpenModal(true)}
+              className="mt-8 w-full bg-black text-white py-3 rounded-xl font-semibold hover:opacity-90 transition cursor-pointer">
                 Apply Now
               </button>
             </motion.div>
@@ -140,5 +145,10 @@ export default function GoldLoanCalculator() {
         </motion.div>
       </div>
     </section>
+    <ApplyModal
+            open={openModal}
+            onClose={() => setOpenModal(false)}
+    />
+    </>
   );
 }
